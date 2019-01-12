@@ -9,13 +9,14 @@ import MyForm from './MyForm'
  * Import styles
  */
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'animate.css/animate.min.css'
 import './index.css'
 
 class App extends Component {
   render() {
     return (
       <Container>
-        <Row className="justify-content-center pt-5 pb-5">
+        <Row className="justify-content-center pt-5 pb-5 animated fadeIn">
           <Col lg="6" md="10" sm="8" className="form-layout">
             <MyForm />
           </Col>

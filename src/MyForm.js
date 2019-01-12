@@ -66,9 +66,13 @@ class MyForm extends React.Component {
     return (
       <Col xs={12}>
         <h2>{user.name}</h2>
-        {projects.map(project => {
+        {projects.map((project, index) => {
+          //add some cool effects style
+          const seconds = ((index + 1) / 10) * 2 + 's'
+          const style = { animationDelay: seconds }
+
           return (
-            <FormGroup>
+            <FormGroup className="fadeIn animated" style={style}>
               <Label for="exampleEmail">{project.name}</Label>
               <Input
                 type="select"
