@@ -37,15 +37,17 @@ class MyForm extends React.Component {
     e.preventDefault()
     const inputs = e.target.elements
     var data = {}
-    for (var input of inputs) {
+    //since it's a htmlcollection can not be iterate with forEach, but Array.prototype.forEach can be called instead
+    Array.prototype.forEach.call(inputs, input => {
       if (input.type === 'select-one') {
         const user = input.name.split('-')[0]
         const project = input.name.split('-')[1]
+
         if (!data[user]) data[user] = {}
 
         data[user][project] = input.value
       }
-    }
+    })
 
     fetch('http://localhost:3000/relations', {
       method: 'POST',
