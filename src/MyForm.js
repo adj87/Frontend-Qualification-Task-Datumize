@@ -33,22 +33,32 @@ class MyForm extends React.Component {
     this.setState({ users, roles, projects })
   }
 
-  handleChange = e => {
-    console.log(JSON.stringify(this.state))
+  handleSubmit = e => {
+    e.preventDefault()
+    const inputs = e.target.elements
+    var data = {}
+    for (var input of inputs) {
+      if (input.type === 'select-one') {
+        const user = input.name.split('-')[0]
+        const project = input.name.split('-')[1]
+        if (!data[user]) data[user] = {}
+
+        data[user][project] = input.value
+      }
+    }
+
+    fetch('http://localhost:3000/relations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => console.log('Success:', response))
   }
 
-  //check whether form is valid or not
-  /*     const { passwordValid, userNameValid } = this.state
-
-    if ((passwordValid, userNameValid)) {
-      this.setState({ formValid: true })
-    }
-  } */
-
-  /*   handleSubmit = e => {
-    e.preventDefault()
-    this.setState({ submittedBefore: true })
-  } */
   renderFormGroup = user => {
     const { projects, roles } = this.state
     return (
@@ -72,7 +82,7 @@ class MyForm extends React.Component {
             </FormGroup>
           )
         })}
-        <div class="dropdown-divider mb-5 mt-5" />
+        <div className="dropdown-divider mb-5 mt-5" />
       </Col>
     )
   }
@@ -80,17 +90,18 @@ class MyForm extends React.Component {
   render() {
     const { users } = this.state
     return (
-      <Form className="mt-4">
-        <p class="text-muted font-italic">
+      <Form className="mt-4" onSubmit={this.handleSubmit}>
+        <p className="text-muted font-italic">
           Please, for each user select a rol for each project
         </p>
+
         <Row>
           {users.length > 0 &&
             users.map(user => {
               return this.renderFormGroup(user)
             })}
 
-          <Button color="primary" size="lg" block>
+          <Button color="primary" size="lg" block type="submit">
             Save
           </Button>
         </Row>
