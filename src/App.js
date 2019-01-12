@@ -15,7 +15,7 @@ class App extends Component {
   render() {
     return (
       <Container>
-        <Row className="justify-content-center pt-5 ">
+        <Row className="justify-content-center pt-5 pb-5">
           <Col lg="6" md="10" sm="8" className="form-layout">
             <MyForm />
           </Col>
