@@ -9,11 +9,14 @@ export default (state, { type, payload }) => {
     case 'FETCH_API_ROLES':
       return { ...state, roles: payload }
 
-    case 'CHANGE_RELATION':
-
-      const newState = { ...state }
+    case 'CHANGE_VALUES_FORM':
+      let newState = { ...state }
       const { user, project, value } = payload
-      newState['relations'][user][project] = value
+
+      if (!newState['formDataValues'][user])
+        newState['formDataValues'][user] = {}
+
+      newState['formDataValues'][user][project] = value
       return newState
 
     default:

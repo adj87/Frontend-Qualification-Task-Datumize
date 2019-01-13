@@ -1,7 +1,7 @@
 /**
  * Import dependencies
  */
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { Container, Row, Col } from 'reactstrap'
 import MyForm from './components/MyForm'
 

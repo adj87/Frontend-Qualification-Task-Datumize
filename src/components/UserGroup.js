@@ -6,10 +6,10 @@ import { Col, Input, FormGroup, Label } from 'reactstrap'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import { changeRelation } from '../actions'
+import { changeValuesForm } from '../actions'
 
-function GroupForm({ data, user, changeRelation }) {
-  const { projects, roles } = data
+function UserGroup({ data, user, changeValuesForm }) {
+  const { projects, roles, formDataValues } = data
 
   return (
     <Col xs={12}>
@@ -20,7 +20,11 @@ function GroupForm({ data, user, changeRelation }) {
         const style = { animationDelay: seconds }
 
         return (
-          <FormGroup className="fadeIn animated" style={style}>
+          <FormGroup
+            className="fadeIn animated"
+            style={style}
+            key={`fomrgroup-${index}`}
+          >
             <Label for="exampleEmail">{project.name}</Label>
             <Input
               type="select"
@@ -30,8 +34,13 @@ function GroupForm({ data, user, changeRelation }) {
                 const usuario = selectedOption.name.split('-')[0]
                 const project = selectedOption.name.split('-')[1]
                 const value = selectedOption.value
-                changeRelation({ user: usuario, project, value })
+                changeValuesForm({ user: usuario, project, value })
               }}
+              value={
+                formDataValues[user.name]
+                  ? formDataValues[user.name][project.name]
+                  : '---'
+              }
             >
               {roles.map((rol, index) => {
                 return (
@@ -40,7 +49,7 @@ function GroupForm({ data, user, changeRelation }) {
                   </option>
                 )
               })}
-              ) )}
+              <option value={null}>---</option>) )}
             </Input>
           </FormGroup>
         )
@@ -56,18 +65,18 @@ const mapStateToProps = state => {
       users: state.users,
       projects: state.projects,
       roles: state.roles,
-      relations: state.relations
+      formDataValues: state.formDataValues
     }
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  changeRelation: bindActionCreators(changeRelation, dispatch)
+  changeValuesForm: bindActionCreators(changeValuesForm, dispatch)
 })
 
-const GroupFormConnected = connect(
+const UserGroupConnected = connect(
   mapStateToProps,
   mapDispatchToProps
-)(GroupForm)
+)(UserGroup)
 
-export default GroupFormConnected
+export default UserGroupConnected

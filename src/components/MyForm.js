@@ -7,9 +7,7 @@ import { Form, Button, Row } from 'reactstrap'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { fetchUsers, fetchProjects, fetchRoles } from '../actions'
-import GroupForm from './GroupForm'
-
-import { url } from '../config'
+import UserGroup from './UserGroup'
 
 class MyForm extends React.Component {
   constructor(props) {
@@ -17,7 +15,7 @@ class MyForm extends React.Component {
     this.rolDefault = 'Viewer'
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.fetchUsers()
     this.props.fetchProjects()
     this.props.fetchRoles()
@@ -44,7 +42,7 @@ class MyForm extends React.Component {
     }) */
     //this.setState({ users, roles, projects, relations })
   }
-  shouldComponentUpdate(newProps) {
+  /*   shouldComponentUpdate(newProps) {
     const usersLength = newProps.data.users.length
 
     //if users data are loaded then re-render the component
@@ -53,7 +51,7 @@ class MyForm extends React.Component {
     } else {
       return false
     }
-  }
+  } */
 
   handleChange = e => {
     const selectedOption = e.target
@@ -83,6 +81,7 @@ class MyForm extends React.Component {
 
   render() {
     const { users } = this.props.data
+    console.log(users.length)
 
     if (users.length > 0) {
       return (
@@ -92,8 +91,8 @@ class MyForm extends React.Component {
           </p>
 
           <Row>
-            {users.map(user => {
-              return <GroupForm user={user} />
+            {users.map((user, index) => {
+              return <UserGroup user={user} key={`user-${index}`} />
             })}
 
             <Button color="primary" size="lg" block type="submit">

@@ -34,9 +34,9 @@ export const fetchRoles = roles => {
   }
 }
 
-export function changeRelation(payload) {
+export function changeValuesForm(payload) {
   return {
-    type: 'CHANGE_RELATION',
+    type: 'CHANGE_VALUES_FORM',
     payload: payload
   }
 }
