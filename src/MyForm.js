@@ -12,8 +12,10 @@ class MyForm extends React.Component {
     this.state = {
       users: [],
       roles: [],
-      projects: []
+      projects: [],
+      relations: {}
     }
+    this.rolDefault = 'Viewer'
   }
 
   async componentDidMount() {
@@ -30,25 +32,31 @@ class MyForm extends React.Component {
       .then(response => response.json())
       .then(data => data)
 
-    this.setState({ users, roles, projects })
+    const relations = {}
+    users.forEach(user => {
+      relations[user.name] = {}
+      projects.forEach(
+        project => (relations[user.name][project.name] = this.rolDefault)
+      )
+    })
+
+    this.setState({ users, roles, projects, relations })
+  }
+
+  handleChange = e => {
+    const selectedOption = e.target
+    const user = selectedOption.name.split('-')[0]
+    const project = selectedOption.name.split('-')[1]
+    const value = selectedOption.value
+
+    const newState = { ...this.state }
+    newState['relations'][user][project] = value
+    this.setState({ ...newState })
   }
 
   handleSubmit = e => {
     e.preventDefault()
-    const inputs = e.target.elements
-    var data = {}
-    //since it's a htmlcollection can not be iterate with forEach, but Array.prototype.forEach can be called instead
-    Array.prototype.forEach.call(inputs, input => {
-      if (input.type === 'select-one') {
-        const user = input.name.split('-')[0]
-        const project = input.name.split('-')[1]
-
-        if (!data[user]) data[user] = {}
-
-        data[user][project] = input.value
-      }
-    })
-
+    const data = this.state.relations
     fetch('http://localhost:3000/relations', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -77,13 +85,17 @@ class MyForm extends React.Component {
               <Input
                 type="select"
                 name={`${user.name}-${project.name}`}
-                onChange={() => this.handleChange}
+                onChange={this.handleChange}
+                defaultValue={this.rolDefault}
               >
-                {roles.map((rol, index) => (
-                  <option key={index} value={rol.name}>
-                    {rol.name}
-                  </option>
-                ))}
+                {roles.map((rol, index) => {
+                  return (
+                    <option key={index} value={rol.name}>
+                      {rol.name}
+                    </option>
+                  )
+                })}
+                ) )}
               </Input>
             </FormGroup>
           )
