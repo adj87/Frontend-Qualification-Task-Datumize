@@ -1,17 +1,42 @@
 import axios from 'axios'
 import { url } from '../config'
 
-export const fetchUsers = users => ({
-  type: 'FETCH_API_USERS',
-  payload: axios(`${url}/users`)
-})
+export const fetchUsers = users => {
+  return dispatch => {
+    axios.get(`${url}/users`).then(users => {
+      dispatch({
+        type: 'FETCH_API_USERS',
+        payload: users.data
+      })
+    })
+  }
+}
 
-export const fetchProjects = projects => ({
-  type: 'FETCH_API_PROJECTS',
-  payload: axios(`${url}/projects`)
-})
+export const fetchProjects = projects => {
+  return dispatch => {
+    axios.get(`${url}/projects`).then(projects => {
+      dispatch({
+        type: 'FETCH_API_PROJECTS',
+        payload: projects.data
+      })
+    })
+  }
+}
 
-export const fetchRoles = roles => ({
-  type: 'FETCH_API_ROLES',
-  payload: axios(`${url}/roles`)
-})
+export const fetchRoles = roles => {
+  return dispatch => {
+    axios.get(`${url}/roles`).then(roles => {
+      dispatch({
+        type: 'FETCH_API_ROLES',
+        payload: roles.data
+      })
+    })
+  }
+}
+
+export function changeRelation(payload) {
+  return {
+    type: 'CHANGE_RELATION',
+    payload: payload
+  }
+}

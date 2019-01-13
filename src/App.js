@@ -3,7 +3,7 @@
  */
 import React, { Component, Fragment } from 'react'
 import { Container, Row, Col } from 'reactstrap'
-import MyForm from './MyForm'
+import MyForm from './components/MyForm'
 
 /**
  * Import styles

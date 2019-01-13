@@ -3,25 +3,26 @@
  */
 
 import React from 'react'
-import { Form, Col, Input, FormGroup, Label, Button, Row } from 'reactstrap'
+import { Form, Button, Row } from 'reactstrap'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchUsers, fetchProjects, fetchRoles } from './actions'
+import { fetchUsers, fetchProjects, fetchRoles } from '../actions'
+import GroupForm from './GroupForm'
 
-import { url } from './config'
+import { url } from '../config'
 
 class MyForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = this.props.data
     this.rolDefault = 'Viewer'
   }
 
-  async componentDidMount() {
-    //fetch all data
+  componentDidMount() {
     this.props.fetchUsers()
     this.props.fetchProjects()
     this.props.fetchRoles()
+
+    //fetch all data
     /*     const users = await fetch('http://localhost:3000/users')
       .then(response => response.json())
       .then(data => data)
@@ -41,8 +42,17 @@ class MyForm extends React.Component {
         project => (relations[user.name][project.name] = this.rolDefault)
       )
     }) */
-
     //this.setState({ users, roles, projects, relations })
+  }
+  shouldComponentUpdate(newProps) {
+    const usersLength = newProps.data.users.length
+
+    //if users data are loaded then re-render the component
+    if (usersLength > 0) {
+      return true
+    } else {
+      return false
+    }
   }
 
   handleChange = e => {
@@ -71,62 +81,30 @@ class MyForm extends React.Component {
       .then(response => console.log('Success:', response))
   }
 
-  renderFormGroup = user => {
-    const { projects, roles } = this.props.data
-    return (
-      <Col xs={12}>
-        <h2>{user.name}</h2>
-        {projects.map((project, index) => {
-          //add some cool effects style
-          const seconds = ((index + 1) / 10) * 2 + 's'
-          const style = { animationDelay: seconds }
-
-          return (
-            <FormGroup className="fadeIn animated" style={style}>
-              <Label for="exampleEmail">{project.name}</Label>
-              <Input
-                type="select"
-                name={`${user.name}-${project.name}`}
-                onChange={this.handleChange}
-                defaultValue={this.rolDefault}
-              >
-                {roles.map((rol, index) => {
-                  return (
-                    <option key={index} value={rol.name}>
-                      {rol.name}
-                    </option>
-                  )
-                })}
-                ) )}
-              </Input>
-            </FormGroup>
-          )
-        })}
-        <div className="dropdown-divider mb-5 mt-5" />
-      </Col>
-    )
-  }
-
   render() {
     const { users } = this.props.data
-    return (
-      <Form className="mt-4" onSubmit={this.handleSubmit}>
-        <p className="text-muted font-italic">
-          Please, for each user select a rol for each project
-        </p>
 
-        <Row>
-          {users.length > 0 &&
-            users.map(user => {
-              return this.renderFormGroup(user)
+    if (users.length > 0) {
+      return (
+        <Form className="mt-4" onSubmit={this.handleSubmit}>
+          <p className="text-muted font-italic">
+            Please, for each user select a rol for each project
+          </p>
+
+          <Row>
+            {users.map(user => {
+              return <GroupForm user={user} />
             })}
 
-          <Button color="primary" size="lg" block type="submit">
-            Save
-          </Button>
-        </Row>
-      </Form>
-    )
+            <Button color="primary" size="lg" block type="submit">
+              Save
+            </Button>
+          </Row>
+        </Form>
+      )
+    } else {
+      return null
+    }
   }
 }
 
