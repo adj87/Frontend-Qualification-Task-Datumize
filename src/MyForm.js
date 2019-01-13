@@ -4,23 +4,25 @@
 
 import React from 'react'
 import { Form, Col, Input, FormGroup, Label, Button, Row } from 'reactstrap'
-//import { PropTypes } from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchUsers, fetchProjects, fetchRoles } from './actions'
+
+import { url } from './config'
 
 class MyForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      users: [],
-      roles: [],
-      projects: [],
-      relations: {}
-    }
+    this.state = this.props.data
     this.rolDefault = 'Viewer'
   }
 
   async componentDidMount() {
     //fetch all data
-    const users = await fetch('http://localhost:3000/users')
+    this.props.fetchUsers()
+    this.props.fetchProjects()
+    this.props.fetchRoles()
+    /*     const users = await fetch('http://localhost:3000/users')
       .then(response => response.json())
       .then(data => data)
 
@@ -38,9 +40,9 @@ class MyForm extends React.Component {
       projects.forEach(
         project => (relations[user.name][project.name] = this.rolDefault)
       )
-    })
+    }) */
 
-    this.setState({ users, roles, projects, relations })
+    //this.setState({ users, roles, projects, relations })
   }
 
   handleChange = e => {
@@ -70,7 +72,7 @@ class MyForm extends React.Component {
   }
 
   renderFormGroup = user => {
-    const { projects, roles } = this.state
+    const { projects, roles } = this.props.data
     return (
       <Col xs={12}>
         <h2>{user.name}</h2>
@@ -106,7 +108,7 @@ class MyForm extends React.Component {
   }
 
   render() {
-    const { users } = this.state
+    const { users } = this.props.data
     return (
       <Form className="mt-4" onSubmit={this.handleSubmit}>
         <p className="text-muted font-italic">
@@ -128,25 +130,26 @@ class MyForm extends React.Component {
   }
 }
 
-/* const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
-    error: state.signIn.error,
-    fetching: state.signIn.fetching,
-    success: state.signIn.success
+    data: {
+      users: state.users,
+      projects: state.projects,
+      roles: state.roles,
+      relations: state.relations
+    }
   }
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    // goToAccount:  () => dispatch(push('/account')),
-    // goToRegister: () => dispatch(push('/register')),
-    signIn: fields => dispatch(SignInActions.request(fields))
-  }
-} */
+const mapDispatchToProps = dispatch => ({
+  fetchUsers: bindActionCreators(fetchUsers, dispatch),
+  fetchProjects: bindActionCreators(fetchProjects, dispatch),
+  fetchRoles: bindActionCreators(fetchRoles, dispatch)
+})
 
-/* const ConnectedSignInForm = connect(
+const ConnectedForm = connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignInForm) */
+)(MyForm)
 
-export default MyForm
+export default ConnectedForm
