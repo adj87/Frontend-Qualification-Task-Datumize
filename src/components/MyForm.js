@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux'
 import { fetchUsers, fetchProjects, fetchRoles } from '../actions'
 import UserGroup from './UserGroup'
 
+import { counterInputsFilled } from '../helpers'
+
 class MyForm extends React.Component {
   constructor(props) {
     super(props)
@@ -80,11 +82,15 @@ class MyForm extends React.Component {
   }
 
   render() {
-    const { users } = this.props.data
-    console.log(users.length)
+    const { users,projects,roles,formDataValues } = this.props.data
+    const amountOfInputs = projects.length*roles.length
+    const amountOfInputsFilled = counterInputsFilled(formDataValues) 
+    const isDisabled = !(amountOfInputs==amountOfInputsFilled)
 
-    if (users.length > 0) {
+    if (users.length > 0 && projects.length>0 && roles.length>0) {
+
       return (
+        
         <Form className="mt-4" onSubmit={this.handleSubmit}>
           <p className="text-muted font-italic">
             Please, for each user select a rol for each project
@@ -95,14 +101,14 @@ class MyForm extends React.Component {
               return <UserGroup user={user} key={`user-${index}`} />
             })}
 
-            <Button color="primary" size="lg" block type="submit">
+            <Button color="primary" size="lg" block type="submit" disabled={isDisabled}>
               Save
             </Button>
           </Row>
         </Form>
       )
     } else {
-      return null
+      return <div>Cargando</div>
     }
   }
 }
@@ -113,7 +119,7 @@ const mapStateToProps = state => {
       users: state.users,
       projects: state.projects,
       roles: state.roles,
-      relations: state.relations
+      formDataValues: state.formDataValues
     }
   }
 }

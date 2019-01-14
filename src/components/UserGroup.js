@@ -49,7 +49,7 @@ function UserGroup({ data, user, changeValuesForm }) {
                   </option>
                 )
               })}
-              <option value={null}>---</option>) )}
+              <option>---</option>) )}
             </Input>
           </FormGroup>
         )
