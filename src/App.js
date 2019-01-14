@@ -4,6 +4,8 @@
 import React, { Component } from 'react'
 import { Container, Row, Col } from 'reactstrap'
 import MyForm from './components/MyForm'
+import { store } from './store'
+import { Provider } from 'react-redux'
 
 /**
  * Import styles
@@ -11,12 +13,6 @@ import MyForm from './components/MyForm'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'animate.css/animate.min.css'
 import './index.css'
-
-/**
- * REDUX
- */
-import { store } from './store'
-import { Provider } from 'react-redux'
 
 class App extends Component {
   render() {

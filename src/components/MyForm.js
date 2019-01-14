@@ -9,67 +9,21 @@ import { bindActionCreators } from 'redux'
 import { fetchUsers, fetchProjects, fetchRoles } from '../actions'
 import UserGroup from './UserGroup'
 
-import { counterInputsFilled } from '../helpers'
+import { counterInputsFilled, url } from '../helpers'
 
 class MyForm extends React.Component {
-  constructor(props) {
-    super(props)
-    this.rolDefault = 'Viewer'
-  }
+  //Since the data is stored in redux state there is no need to create an internal state nor a constructor
 
   componentWillMount() {
     this.props.fetchUsers()
     this.props.fetchProjects()
     this.props.fetchRoles()
-
-    //fetch all data
-    /*     const users = await fetch('http://localhost:3000/users')
-      .then(response => response.json())
-      .then(data => data)
-
-    const roles = await fetch('http://localhost:3000/roles')
-      .then(response => response.json())
-      .then(data => data)
-
-    const projects = await fetch('http://localhost:3000/projects')
-      .then(response => response.json())
-      .then(data => data)
-
-    const relations = {}
-    users.forEach(user => {
-      relations[user.name] = {}
-      projects.forEach(
-        project => (relations[user.name][project.name] = this.rolDefault)
-      )
-    }) */
-    //this.setState({ users, roles, projects, relations })
-  }
-  /*   shouldComponentUpdate(newProps) {
-    const usersLength = newProps.data.users.length
-
-    //if users data are loaded then re-render the component
-    if (usersLength > 0) {
-      return true
-    } else {
-      return false
-    }
-  } */
-
-  handleChange = e => {
-    const selectedOption = e.target
-    const user = selectedOption.name.split('-')[0]
-    const project = selectedOption.name.split('-')[1]
-    const value = selectedOption.value
-
-    const newState = { ...this.state }
-    newState['relations'][user][project] = value
-    this.setState({ ...newState })
   }
 
   handleSubmit = e => {
     e.preventDefault()
-    const data = this.state.relations
-    fetch('http://localhost:3000/relations', {
+    const data = this.props.data.formDataValues
+    fetch(`${url}/relations`, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -77,23 +31,21 @@ class MyForm extends React.Component {
       }
     })
       .then(res => res.json())
-      .catch(error => console.error('Error:', error))
-      .then(response => console.log('Success:', response))
+      .catch(error => console.log('Error:', error))
+      .then(response => console.log('Success:', JSON.stringify(response)))
   }
 
   render() {
-    const { users,projects,roles,formDataValues } = this.props.data
-    const amountOfInputs = projects.length*roles.length
-    const amountOfInputsFilled = counterInputsFilled(formDataValues) 
-    const isDisabled = !(amountOfInputs==amountOfInputsFilled)
+    const { users, projects, roles, formDataValues } = this.props.data
+    const amountOfInputs = projects.length * roles.length
+    const amountOfInputsFilled = counterInputsFilled(formDataValues)
+    const isDisabled = !(amountOfInputs === amountOfInputsFilled)
 
-    if (users.length > 0 && projects.length>0 && roles.length>0) {
-
+    if (users.length > 0 && projects.length > 0 && roles.length > 0) {
       return (
-        
         <Form className="mt-4" onSubmit={this.handleSubmit}>
           <p className="text-muted font-italic">
-            Please, for each user select a rol for each project
+            Please, for each user select a <b>rol</b> for each <b>project</b>
           </p>
 
           <Row>
@@ -101,7 +53,13 @@ class MyForm extends React.Component {
               return <UserGroup user={user} key={`user-${index}`} />
             })}
 
-            <Button color="primary" size="lg" block type="submit" disabled={isDisabled}>
+            <Button
+              color="primary"
+              size="lg"
+              block
+              type="submit"
+              disabled={isDisabled}
+            >
               Save
             </Button>
           </Row>
