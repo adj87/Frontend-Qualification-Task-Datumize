@@ -60,7 +60,7 @@ class MyForm extends React.Component {
               type="submit"
               disabled={isDisabled}
             >
-              Save
+              Submit
             </Button>
           </Row>
         </Form>
